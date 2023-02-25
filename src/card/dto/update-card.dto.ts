@@ -3,31 +3,32 @@ import { CreateCardDto } from './create-card.dto'
 import { IsNumber, IsString } from 'class-validator'
 import { Category } from 'src/category/entities/category.entity'
 import { City } from 'src/city/entities/city.entity'
+import { Format } from 'src/format/entities/format.entity'
+import { Rating } from 'src/rating/entities/rating.entity'
 
 export class UpdateCardDto {
 	@IsString()
-	title: string
+	name: string
+
+	@IsNumber()
+	age: number
 
 	@IsString()
 	description: string
 
-	@IsNumber()
-	rating?: number
+	rating?: Rating
 
 	categories: Category[]
-	isOnline: boolean
 
-	isOffline: boolean
+	formats?: Format[]
+
+	rate?: number
+
+	images: string[]
 
 	city: City
 
-	@IsString()
-	address: string
-
-	@IsNumber()
-	middle_price?: number
-
 	// Image
 	@IsString()
-	thumbnail: string
+	avatar: string
 }

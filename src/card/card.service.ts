@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common'
 import { BadRequestException, HttpException } from '@nestjs/common/exceptions'
 import { InjectRepository } from '@nestjs/typeorm'
 import dataSource from 'src/db/data-source'
+import { Rating } from 'src/rating/entities/rating.entity'
 import { User } from 'src/user/entities/user.entity'
 
 import {
@@ -26,7 +27,7 @@ export class CardService {
 
 	async getAllCards() {
 		await this.cardRepository.find({
-			relations: {}
+			relations: { experience: true }
 		})
 		return this.cardRepository
 			.createQueryBuilder('c')
@@ -36,14 +37,37 @@ export class CardService {
 			.getMany()
 	}
 
+	async getAll(searchTerm?: string) {
+		const result = await this.cardRepository
+			.createQueryBuilder()
+			.select()
+			.where('name like :searchTerm', {
+				searchTerm: `%${searchTerm}%`
+			})
+			.getMany()
+
+		return result
+	}
+
+	async getMostPopularCards() {
+		return await this.cardRepository.find({
+			order: {
+				views: 'DESC'
+			}
+		})
+	}
 	async queryBuilder(alias: string) {
 		return this.cardRepository.createQueryBuilder(alias)
 	}
 
-	async getOne(id: number) {
+	async getOne(id: string) {
 		return await this.cardRepository.findOne({
 			relations: {
-				categories: true
+				categories: true,
+				rating: true,
+				owner: true,
+				experience: true,
+				city: true
 			},
 			where: {
 				id: id
@@ -54,15 +78,15 @@ export class CardService {
 	async filterData(
 		city: string,
 		category: string,
-		from: number,
-		to: number,
+		experience: string,
 		format: string
 	) {
 		return await this.cardRepository.find({
 			relations: {
 				city: true,
 				categories: true,
-				formats: true
+				formats: true,
+				experience: true
 			},
 
 			where: {
@@ -77,11 +101,15 @@ export class CardService {
 				formats: {
 					name: format
 				},
+				experience: {
+					name: experience
+				}
 
-				middle_price: Between(from, to)
+				// middle_price: Between(from, to)
 			}
 		})
 	}
+
 	async create(cardDto: CreateCardDto) {
 		try {
 			const alreadyExist = await this.cardRepository.findOne({
@@ -106,7 +134,17 @@ export class CardService {
 		// return card
 	}
 
-	async favorite(cardId: number, userId: number) {
+	async delete(id: string) {
+		const deleteCard = await this.cardRepository.findOne({
+			where: {
+				id: id
+			}
+		})
+
+		return this.cardRepository.remove(deleteCard)
+	}
+
+	async favorite(cardId: string, userId: number) {
 		let card = await this.cardRepository.findOne({
 			where: {
 				id: cardId
@@ -134,7 +172,7 @@ export class CardService {
 		return user
 	}
 
-	async unfavorite(cardId: number, userId: number) {
+	async unfavorite(cardId: string, userId: number) {
 		let card = await this.cardRepository.findOne({
 			where: {
 				id: cardId
@@ -181,7 +219,7 @@ export class CardService {
 		return `This action returns a #${id} card`
 	}
 
-	async updateCountViews(id: number) {
+	async updateCountViews(id: string) {
 		const updateCard = await this.cardRepository.findOne({
 			where: { id: id },
 			select: ['id', 'views']
@@ -189,27 +227,21 @@ export class CardService {
 		updateCard.views += 1
 		return this.cardRepository.save(updateCard)
 	}
-	async update(id: number, updateCardDto: UpdateCardDto) {
-		// return await dataSource
-		// 	.createQueryBuilder()
-		// 	.update(Card)
-		// 	.set(updateCardDto)
-		// 	.where('id = :id', { id: id })
-		// 	.execute()
 
-		// return await this.cardRepository.update(id, updateCardDto)
-		// const updatePost = await this.cardRepository.findOne({
-		// 	where: {
-		// 		id: id
-		// 	}
-		// })
-		// const { categories } = updateCardDto
-		// updatePost.title = updateCardDto.title
-		// updatePost.categories = categories
-		// console.log(updatePost.categories)
+	async updateRating(cardId: string, rating: number) {
+		const card = await this.cardRepository.findOne({
+			where: {
+				id: cardId
+			}
+		})
+		console.log('RATING', rating)
 
-		// return await this.cardRepository.save(updatePost)
+		card.rate = rating
+		console.log(card.rate, rating, 'RAAAT')
 
+		return await this.cardRepository.save(card)
+	}
+	async update(id: string, updateCardDto: UpdateCardDto) {
 		const entityname = await this.cardRepository.findOne({
 			where: {
 				id: id

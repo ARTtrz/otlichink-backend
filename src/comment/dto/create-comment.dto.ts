@@ -7,6 +7,5 @@ export class CreateCommentDto {
 
 	user?: User
 
-	@IsNumber()
-	post: number
+	post: string
 }

@@ -9,7 +9,9 @@ import {
 	UseGuards,
 	UseInterceptors,
 	Req,
-	UploadedFile
+	UploadedFile,
+	Query,
+	HttpCode
 } from '@nestjs/common'
 import { UserService } from './user.service'
 import { CreateUserDto } from './dto/create-user.dto'
@@ -38,6 +40,30 @@ export class UserController {
 	@Get('get')
 	findOne(@CurrentUser() user: User) {
 		return user
+	}
+
+	@Get('get-search')
+	@UseGuards(JwtAuthGuard)
+	async getUsers(@Query('searchTerm') searchTerm?: string) {
+		return this.userService.getAll(searchTerm)
+	}
+
+	@Delete(':id')
+	@HttpCode(200)
+	@UseGuards(JwtAuthGuard)
+	async deleteUser(@Param('id') id: number) {
+		return this.userService.delete(id)
+	}
+
+	@UseGuards(JwtAuthGuard)
+	@Get('count')
+	getUserCount() {
+		return this.userService.getUsersCount()
+	}
+
+	@Post('set-admin/:id')
+	async setAdmin(@Param('id') id: number) {
+		return await this.userService.setAdmin(id)
 	}
 
 	@UseGuards(JwtAuthGuard)

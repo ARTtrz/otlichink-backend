@@ -10,7 +10,7 @@ import { Repository } from 'typeorm'
 import { CreateAuthDto } from './dto/create-auth.dto'
 import { UpdateAuthDto } from './dto/update-auth.dto'
 import { JwtService } from '@nestjs/jwt'
-import { compare } from 'bcrypt'
+import { compare } from 'bcryptjs'
 import { UserRegisterRequestDto } from './dto/user-register.dto'
 import { AuthDto } from './dto/auth.dto'
 import { UserRoles } from 'src/user/enums/user.enum'
@@ -87,7 +87,8 @@ export class AuthService {
 		return {
 			id: user.id,
 			email: user.email,
-			name: user.name
+			name: user.name,
+			isAdmin: user.isAdmin
 		}
 	}
 

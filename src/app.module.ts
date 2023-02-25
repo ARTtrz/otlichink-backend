@@ -18,6 +18,11 @@ import { FormatModule } from './format/format.module'
 import { RatingModule } from './rating/rating.module'
 
 import { ImageModule } from './image/image.module'
+import { MessageModule } from './message/message.module';
+import { ConversationModule } from './conversation/conversation.module';
+import { OrderModule } from './order/order.module';
+import { AnswerModule } from './answer/answer.module';
+import { ExperienceModule } from './experience/experience.module';
 
 @Module({
 	imports: [
@@ -46,7 +51,17 @@ import { ImageModule } from './image/image.module'
 		FormatModule,
 		RatingModule,
 
-		ImageModule
+		ImageModule,
+
+		MessageModule,
+
+		ConversationModule,
+
+		OrderModule,
+
+		AnswerModule,
+
+		ExperienceModule
 	],
 
 	providers: [AppService]

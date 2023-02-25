@@ -7,7 +7,7 @@ export const dataSourceOptions: DataSourceOptions = {
 	port: 3306,
 	username: 'root',
 	password: 'Artyom_2006',
-	database: 'otlichnik',
+	database: 'hakaton',
 
 	entities: [__dirname + '/../**/*.entity.{ts,js}'], //нужно былоо тс первым делать\
 

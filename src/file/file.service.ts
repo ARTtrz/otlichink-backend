@@ -9,7 +9,7 @@ import { Repository } from 'typeorm'
 import { CreateImageDto } from 'src/image/dto/create-image.dto'
 import { string } from 'joi'
 
-const AWS_S3_BUCKET_NAME = 'otlichnik-kz'
+const AWS_S3_BUCKET_NAME = 'hackaton-platform-bucket'
 const s3 = new AWS.S3()
 AWS.config.update({
 	accessKeyId: process.env.AWS_ACCESS_KEY_ID,

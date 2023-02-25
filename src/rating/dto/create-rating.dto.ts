@@ -2,7 +2,7 @@ import { IsNumber } from 'class-validator'
 
 export class CreateRatingDto {
 	@IsNumber()
-	cardId: number
+	cardId: string
 
 	@IsNumber()
 	value: number

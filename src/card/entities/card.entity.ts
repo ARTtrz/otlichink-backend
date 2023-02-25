@@ -21,28 +21,42 @@ import { Rating } from 'src/rating/entities/rating.entity'
 
 import { Pic } from './pic.dto'
 import { ImageEntity } from 'src/image/entities/image.entity'
+import { Experience } from 'src/experience/entities/experience.entity'
 
 @Entity({ name: 'card' })
 export class Card extends BaseEntity {
-	@PrimaryGeneratedColumn()
-	id: number
+	@PrimaryGeneratedColumn('uuid')
+	id: string
+
+	@Column({ default: 0 })
+	rate: number
 
 	@Column()
-	title: string
+	name: string
+
+	@Column()
+	age: number
 
 	@Column({ type: 'mediumtext' })
 	description: string
 
-	@Column({ type: 'text' })
-	work_time: string
+	@Column()
+	phone_number: string
+
+	@Column({ default: false })
+	isPublic: boolean
 
 	@Column({ nullable: true })
-	thumbnail: string
+	avatar: string
 
-	@OneToOne(() => Rating, (rating) => rating.card)
+	@OneToMany(() => Rating, (rating) => rating.card, {
+		onDelete: 'CASCADE'
+	})
 	rating: Rating // пока что так, потом нужно создать отдельный компнонент
 
-	@ManyToOne(() => User, (user) => user.cards)
+	@ManyToOne(() => User, (user) => user.cards, {
+		onDelete: 'CASCADE'
+	})
 	owner: User
 
 	// @Column({
@@ -65,6 +79,11 @@ export class Card extends BaseEntity {
 	@JoinTable({ name: 'card_categories' })
 	categories: Array<Category>
 
+	@ManyToOne(() => Experience, (category) => category.cards, {
+		cascade: true
+	})
+	experience: Category
+
 	@ManyToMany(() => Format, (format) => format.cards, {
 		cascade: true
 	})
@@ -79,11 +98,8 @@ export class Card extends BaseEntity {
 	@Column({ nullable: true, default: 0 })
 	views?: number
 
-	@Column({ nullable: true, default: 0 })
-	middle_price: number
-
-	@Column({ nullable: true })
-	address: string
+	// @Column({ nullable: true })
+	// address: string
 
 	@Column({ default: 0 })
 	favoriteCount: number

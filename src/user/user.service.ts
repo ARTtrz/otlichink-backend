@@ -41,6 +41,28 @@ export class UserService {
 		)
 	}
 
+	async getAll(searchTerm?: string) {
+		const result = await this.userRepository
+			.createQueryBuilder()
+			.select()
+			.where('name like :searchTerm', {
+				searchTerm: `%${searchTerm}%`
+			})
+			.getMany()
+
+		return result
+	}
+
+	async delete(id: number) {
+		const deleteCard = await this.userRepository.findOne({
+			where: {
+				id: id
+			}
+		})
+
+		return this.userRepository.remove(deleteCard)
+	}
+
 	async getAllUsers() {
 		return this.userRepository.find()
 	}
@@ -51,6 +73,20 @@ export class UserService {
 
 	async queryBuilder(alias: string) {
 		return this.userRepository.createQueryBuilder(alias)
+	}
+
+	async getUsersCount() {
+		return (await this.userRepository.find()).length
+	}
+
+	async setAdmin(userId: number) {
+		const user = await this.userRepository.findOne({
+			where: {
+				id: userId
+			}
+		})
+		user.isAdmin = true
+		return this.userRepository.save(user)
 	}
 
 	// async toggleFavorite(cardId: number, user: User) {

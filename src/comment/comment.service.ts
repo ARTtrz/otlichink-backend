@@ -17,7 +17,7 @@ export class CommentService {
 		return this.commentRepository.save(comment)
 	}
 
-	async byPostId(postId: number) {
+	async byPostId(postId: string) {
 		const comments = await this.commentRepository.find({
 			relations: {
 				user: true

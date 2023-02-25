@@ -29,5 +29,5 @@ export class Comment extends BaseEntity {
 
 	// post
 	@Column()
-	post: number
+	post: string
 }
